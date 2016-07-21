@@ -24,7 +24,7 @@ def pinfo(module, message):
 
 
 def help():
-    perr ("System", "ERROR. Can't read file \n\nUsage " + sys.argv[0] + " <filename> \nExample " + sys.argv[0] + " 101_ipam.csv 101_bootp.csv\n")
+    perr ("System", "ERROR. Can't read file \n\nUsage " + sys.argv[0] + " <ipamfile> <bootpfile>  \nExample " + sys.argv[0] + " 101_ipam.csv 101_bootp.csv\n")
     sys.exit(1)
 
 if len(sys.argv) != 3:
