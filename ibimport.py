@@ -6,6 +6,7 @@ import subprocess
 import os.path
 import numpy
 import pandas
+import itertools
 
 class colors:
     YELLOW = '\033[33m'
