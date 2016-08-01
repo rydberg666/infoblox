@@ -45,9 +45,6 @@ try:
     output_file = open(sys.argv[1][0:3] + "_IB.csv", "w")
 except:
     help()
-
-
-
 #Create temporary file for bootp data and add column names since they are absent
 tempfile = open(sys.argv[1][0:3] + "_IB.tmp", "w")
 tempfile.write("fqdn macaddress IPAddress Reply\n")
@@ -55,48 +52,41 @@ tempfile.write("fqdn macaddress IPAddress Reply\n")
 #Create temporary file for ipam data
 tempfile2 = open(sys.argv[1][0:3] + "_ipam.tmp", "w")
 
+#-----------------------------------------------------------------------------------------------
+        
+def replace_all(f1 ,f2 , dic):
+    for line in f1:
+	    line = line.lower()
+	    for i, j in dic.iteritems():
+	    	line = line.replace(i,j)
+            if "true" in line:
+                line = line.replace(" true", "")
+                line = line[:-2] + "true\n"
+            else:
+                line = line[:-2] + "false\n"
+            if not line.startswith("#"):
+                f2.write(line)
+            
+dictionary_ipam = {'å':'a', 'ä': 'ae', 'ö':'oe', 'Å': 'a',
+ 'Ä': 'ae', 'Ö': 'oe', 'device name' :'fqdn', 'asset tag': 'EA-Inventarie',
+ 'description': 'EA-Modell', 'cost': 'EA-Kostnadsstalle',
+ 'hardware': 'EA-Hardvarutyp',
+ 'others': 'EA-Beskrivning', 'room': 'EA-Rum', '�': 'oe' }   
 
+dictionary_bootp = {'; ':'', '{':'', '}': '', 'hardware ethernet ': '',
+ 'host ': '', 'fixed-address ': '', 'always-reply-rfc1048 ': '', '  ': ' '}
+#-----------------------------------------------------------------------------------------------
 #Eliminate UpperCaseHUManErrOrs, replace characters to conform with IB, set Column headers
-for line in input_file_ipam:
-    line = line.lower()
-    line = line.replace("device name", "fqdn")
-    line = line.replace("asset tag", "EA-Inventarie")
-    line = line.replace("description", "EA-Modell")
-    line = line.replace("cost", "EA-Kostnadsstalle")
-    line = line.replace("hardware", "EA-Hardvarutyp")
-    line = line.replace("others", "EA-Beskrivning")
-    line = line.replace("room", "EA-Rum")
-    line = line.replace("�", "oe")
-    line = line.replace("å", "a")
-    line = line.replace("ä", "ae")
-    line = line.replace("ö", "oe")
-    tempfile2.write(line)
+
+replace_all(input_file_ipam, tempfile2, dictionary_ipam)
 tempfile2.close
 tempfile2 = open(sys.argv[1][0:3] + "_ipam.tmp", "r")
-
-#Search and replace unwanted text from bootp data
-for line in input_file_bootp:
-    line = line.lower()
-    if "true" in line:
-        line = line.replace(" true", "")
-        line = line[:-2] + "true\n"
-    else:
-        line = line[:-2] + "false\n"
-    line = line.replace("{", "")
-    line = line.replace("}", "")
-    line = line.replace(";", "")
-    line = line.replace("hardware ethernet", "")
-    line = line.replace("host ", "")
-    line = line.replace("fixed-address", "")
-    line = line.replace("always-reply-rfc1048", "")
-    line = line.replace("   ", " ")
-    line = line.replace("  ", " ")
-    if not line.startswith("#"):
-        tempfile.write(line)
+replace_all(input_file_bootp, tempfile, dictionary_bootp)
 tempfile.close()
 tempfile = open(sys.argv[1][0:3] + "_IB.tmp", "r")
 
 
+#--------------------------------------------------------------------------------------
 #Create datafield from the cleaned up ipam data only containing the columns we want
 df = pandas.read_csv(tempfile2)
 keep_cols = ["fqdn", "ip address", "EA-Inventarie", "EA-Modell", "EA-Kostnadsstalle", "EA-Hardvarutyp", "EA-Beskrivning", "EA-Rum"]
