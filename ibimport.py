@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+# Tue Aug 2 2016 Johan Hedström <johan.hedstrom@sodertaljesjukhus.se>
+# Updated xxx
+#
 # Mon Aug 1 2016 Johan Hedström <johan.hedstrom@sodertaljesjukhus.se>
 # Cleaned up version
 # Program to clean up/merge IPAM/BOOTP data from unix/MS to Infoblox 
 # This program reads data from 2 files, bootp data and ipam data
-# These files are cleaned up and merged into a singel csvfile conforming to Infoblox syntax for data import
+# These files are cleaned up and merged into a single csv file conforming to Infoblox syntax for data import
 
 import sys
 import os
@@ -23,27 +25,26 @@ class colors:
     RED = '\033[91m'
     ENDCOLOR = '\033[0m'
     
-# definition of help function, informs wether if file is missing or parameterlist is wrong
+# Help function, informs wether if file is missing or parameterlist is wrong
 def help(msg):
-    if "Faulty" in msg:
-        print colors.RED + msg + colors.ENDCOLOR
-    else:
-        print colors.RED + "File "+ msg + " not found" + colors.ENDCOLOR
-    print colors.YELLOW + "Usage: "+  sys.argv[0] + " <ipam file> <bootpfile>" + colors.ENDCOLOR
+    print colors.RED + msg + colors.ENDCOLOR
     exit(1)
     
 if len(sys.argv) != 3:
-    help("Faulty parameterlist")
-# Open file containing ipam data for reading    
+    help("Faulty parameterlist\n\nUsage " + sys.argv[0] + " ipam_data_file bootp_file")
+
+# Open file containing ipam data for reading
 try:
     input_file_ipam = open(sys.argv[1], "r")
 except:
-    help(sys.argv[1])
+    help("Error: Could not open ipam file: " + sys.argv[1])
+
 # Open file containing bootp data for reading
 try:
     input_file_bootp = open(sys.argv[2], "r")
 except:
-    help(sys.argv[2])
+    help("Error: Could not open bootp file: " + sys.argv[2])
+
 # Open the final outputfile for writing and names it after input ipamfile's first 3 chars. ie "105_IB.csv"
 try:
     output_file = open(sys.argv[1][0:3] + "_IB.csv", "w")
@@ -62,6 +63,7 @@ def replace_all(f1,f2,dic):
     for line in f1:
         # Since people have been sloppy we need to convert all text to lowercase...
         line = line.lower()
+
         """Bootpdata rows contain the value true for option always-reply-rfc1048, we need this moved to the
         last column to be. If the row does not contain the value true we add false instead for consistency
         """
@@ -70,11 +72,13 @@ def replace_all(f1,f2,dic):
             line = line[:-2] + " true\n"
         else:
             line = line[:-2] + " false\n"
+
         # Iterates our dictionary and replaces as needed for our wanted syntax
         for i,j in dic.iteritems():
             line = line.replace(i,j)
         # Replaces all pesky double, triple spaces with a single ' '
         line = re.sub('\s{2,}', ' ', line)
+
         """ Again, since people have been sloppy, there are left rows beginning with # in the bootfile.
         If we do not remove these we will in worst case be left with duplicate host entrys in the final
         product. Best case leaves us with a not used macaddress
@@ -151,17 +155,3 @@ tempfile.close()
 tempfile2.close()
 os.remove(sys.argv[1][0:3] + "_bootp.tmp")
 os.remove(sys.argv[1][0:3] + "_ipam.tmp")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
