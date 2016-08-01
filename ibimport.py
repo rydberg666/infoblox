@@ -7,6 +7,8 @@ import os.path
 import numpy
 import pandas
 import itertools
+import re
+
 
 class colors:
     YELLOW = '\033[33m'
@@ -30,51 +32,50 @@ def help():
 
 if len(sys.argv) != 3:
     help()
-#Create temporary file containing ipam data
+# Create temporary file containing ipam data
 try:
     input_file_ipam = open(sys.argv[1], "r")
 except:
     help()
-#Create temporary file containing bootp data
+# Create temporary file containing bootp data
 try:
     input_file_bootp = open(sys.argv[2], "r")
 except:
     help()
-#Create the outputfile
+# Create the outputfile
 try:
     output_file = open(sys.argv[1][0:3] + "_IB.csv", "w")
 except:
     help()
-#Create temporary file for bootp data and add column names since they are absent
+# Create temporary file for bootp data and add column names since they are absent
 tempfile = open(sys.argv[1][0:3] + "_IB.tmp", "w")
 tempfile.write("fqdn macaddress IPAddress Reply\n")
 
-#Create temporary file for ipam data
+# Create temporary file for ipam data
 tempfile2 = open(sys.argv[1][0:3] + "_ipam.tmp", "w")
 
 #-----------------------------------------------------------------------------------------------
-        
-def replace_all(f1 ,f2 , dic):
+
+def replace_all(f1,f2,dic):
     for line in f1:
-	    line = line.lower()
-	    for i, j in dic.iteritems():
-	    	line = line.replace(i,j)
-            if "true" in line:
-                line = line.replace(" true", "")
-                line = line[:-2] + "true\n"
-            else:
-                line = line[:-2] + "false\n"
-            if not line.startswith("#"):
-                f2.write(line)
-            
+        line = line.lower()
+        if "true" in line:
+            line = line.replace(" true ", "")
+            line = line[:-2] + " true\n"
+        else:
+            line = line[:-2] + " false\n"
+        for i,j in dic.iteritems():
+            line = line.replace(i,j)
+        line = re.sub('\s{2,}', ' ', line)
+        f2.write(line)
 dictionary_ipam = {'å':'a', 'ä': 'ae', 'ö':'oe', 'Å': 'a',
  'Ä': 'ae', 'Ö': 'oe', 'device name' :'fqdn', 'asset tag': 'EA-Inventarie',
  'description': 'EA-Modell', 'cost': 'EA-Kostnadsstalle',
  'hardware': 'EA-Hardvarutyp',
  'others': 'EA-Beskrivning', 'room': 'EA-Rum', '�': 'oe' }   
 
-dictionary_bootp = {'; ':'', '{':'', '}': '', 'hardware ethernet ': '',
- 'host ': '', 'fixed-address ': '', 'always-reply-rfc1048 ': '', '  ': ' '}
+dictionary_bootp = {';':'', '{':'', '}': '', 'hardware ethernet ': '',
+ 'host': '', 'fixed-address': '', 'always-reply-rfc1048':''}
 #-----------------------------------------------------------------------------------------------
 #Eliminate UpperCaseHUManErrOrs, replace characters to conform with IB, set Column headers
 
