@@ -25,7 +25,7 @@ class colors:
     RED = '\033[91m'
     ENDCOLOR = '\033[0m'
     
-# Help function, informs wether file is missing or parameterlist is wrong
+# Help function, informs if file is missing or parameterlist is wrong
 def help(msg):
     print colors.RED + msg + colors.ENDCOLOR
     exit(1)
