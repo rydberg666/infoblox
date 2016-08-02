@@ -104,7 +104,7 @@ def replace_bootp(f1, f2, dic):
         
         if not line.startswith("#"):
             f2.write(line)
-        else
+        else:
             pass
             
 # replace_ipam function takes input and outputfiles plus dictionary as arguments            
