@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+#
 # Tue Aug 2 2016 Johan Hedström <johan.hedstrom@sodertaljesjukhus.se>
-# Updated 
+#  
 #
 # This program was designed to handle the formatting and merging needed for migrating DDI data from
-# Unix bootp and Microsoft DNS/IPAM to Infoblox
-#  
+# Unix bootp and Microsoft DNS/IPAM to Infoblox 
 # This program reads data from 2 files, bootp data and ipam data
 # These files are cleaned up and merged into a single csv file conforming to Infoblox syntax for data import
 # and configuration
@@ -26,7 +25,7 @@ class colors:
     RED = '\033[91m'
     ENDCOLOR = '\033[0m'
     
-# Help function, informs wether file is missing or parameterlist is wrong
+# Help function, informs if file is missing or parameterlist is wrong
 def help(msg):
     print colors.RED + msg + colors.ENDCOLOR
     exit(1)
