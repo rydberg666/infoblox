@@ -32,7 +32,8 @@ def help(msg):
     
 if len(sys.argv) != 3:
     help("Faulty parameterlist\n\nUsage " + sys.argv[0] + " ipam_data_file bootp_data_file")
-
+else:
+    pass
 # Open file containing ipam data for reading
 try:
     input_file_ipam = open(sys.argv[1], "r")
@@ -82,11 +83,13 @@ def replace_bootp(f1, f2, dic):
         """ Bootpdata rows contain the value true for option always-reply-rfc1048, we need this moved to the
         end of each line. If the row does not contain the value true we add false instead for consistency
         """
+        
         if "true" in line:
             line = line.replace(" true ", "")
             line = line[:-1] + " true\n"
         else:
             line = line[:-1] + " false\n"
+            
         # Iterates our dictionary and replaces as needed for our wanted format
         for i,j in dic.iteritems():
             line = re.sub(i,j,line)
@@ -99,6 +102,8 @@ def replace_bootp(f1, f2, dic):
         """
         if not line.startswith("#"):
             f2.write(line)
+        else
+            pass
             
 # replace_ipam function takes input and outputfiles plus dictionary as arguments            
 def replace_ipam(f1,f2,dic):
