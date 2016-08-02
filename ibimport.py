@@ -34,6 +34,7 @@ if len(sys.argv) != 3:
     help("Faulty parameterlist\n\nUsage " + sys.argv[0] + " ipam_data_file bootp_data_file")
 else:
     pass
+    
 # Open file containing ipam data for reading
 try:
     input_file_ipam = open(sys.argv[1], "r")
@@ -100,6 +101,7 @@ def replace_bootp(f1, f2, dic):
         If we do not remove these we will in worst case be left with duplicate host entrys in the final
         product.
         """
+        
         if not line.startswith("#"):
             f2.write(line)
         else
